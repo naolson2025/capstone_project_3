@@ -16,4 +16,4 @@ class Artwork(Model):
         database = db
 
     def __str__(self):
-        return f'{self.artist} + "\t|\t" + {self.name_of_work} + "\t|\t" + {self.price} + "\t|\t" + {self.available}'
+        return f'Artist: {self.artist} \tArtwork Name: {self.name_of_artwork} \tPrice: {self.price} \tAvailable: {self.available}'

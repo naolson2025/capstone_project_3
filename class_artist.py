@@ -12,4 +12,4 @@ class Artist(Model):
         database = db
 
     def __str__(self):
-        return f'{self.name} + "\t|\t" + {self.email}'
+        return f'{self.name} \tEmail: {self.email}'

@@ -110,6 +110,7 @@ def addNewArtist():
     # Add the new artist to the db
     new_artist = Artist.Artist(name=name, email=email)
     new_artist.save()
+    print(name + ' was added successfully.')
     db.close()
 
 def searchArtworkByArtist():
@@ -119,8 +120,11 @@ def searchArtworkByArtist():
     # Locate all artwork with the corresponding name
     artwork_list = Artwork.Artwork.select().where(Artwork.Artwork.artist == name)
     # Display all artwork 
-    for artwork in artwork_list:
-        print(artwork)
+    if len(artwork_list) == 0:
+        print('This artist has no artwork in the database.')
+    else:
+        for artwork in artwork_list:
+            print(artwork)
     db.close()
 
 def searchAvailableArtworkByArtist():
@@ -128,10 +132,14 @@ def searchAvailableArtworkByArtist():
     # Get the name of the artist that the user wants to view their available artwork
     name = input('Enter the name of the artist: ')
     # Locate all artwork with the corresponding name that is available
-    artwork_list = Artwork.Artwork.select().where(Artwork.Artwork.artist == name and Artwork.Artwork.available == True)
+    artwork_list = Artwork.Artwork.select().where(Artwork.Artwork.artist == name, Artwork.Artwork.available == True)
     # Display all available artwork 
-    for artwork in artwork_list:
-        print(artwork)
+    # Test if there is no available artwork
+    if len(artwork_list) == 0:
+        print('This artist has no available artwork.')
+    else:
+        for artwork in artwork_list:
+            print(artwork)
     db.close()
 
 def addNewArtwork():
@@ -143,13 +151,13 @@ def addNewArtwork():
     while True:
         try:
             price = float(input('Enter the price of the piece of artwork: '))
-            if catches > 0:
+            if price > 0:
                 break
             else:
                 print('Price must be a positive number.')
         except:
             pass
-        print('Number of catches must be a number.')
+        print('Price must be a number.')
     # Loop to get the user to enter true or false for artwork availability
     while True:
         try:
@@ -180,15 +188,19 @@ def changeArtworkAvailability():
     name_of_artwork = input('Enter the name of the artwork that\'s availability is being changed: ')
     # Loop to get the user to enter true or false for artwork availability
     while True:
-        try:
-            available = bool(input('Is this artwork available? True or False: '))
+        availability = input('Is this artwork available? Y or N: ')
+        if availability.lower() == 'y':
+            availability = True
             break
-        except:
+        elif availability.lower() == 'n':
+            availability = False
+            break
+        else:
             pass
-        print('Entry invalid.')
-    update = Artwork.Artwork.update(available=available).where(Artwork.Artwork.name_of_artwork == name_of_artwork).execute()
+            print('Entry invalid.')
+    update = Artwork.Artwork.update(available=availability).where(Artwork.Artwork.name_of_artwork == name_of_artwork).execute()
     if update > 0:
-        print(name_of_artwork + ' now has an availability of: ' + available)
+        print(name_of_artwork + ' now has the availability of: ' + str(availability))
     else:
         print('This piece of artwork was not found in the database.') 
     db.close()
