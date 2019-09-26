@@ -43,7 +43,11 @@ def main():
             search_available_artwork_by_artist(name)
 
         if user_choice == 4:
-            addNewArtwork()
+            name = get_artist_name()
+            artwork_name = get_name_of_artwork()
+            artwork_price = get_price_of_artwork()
+            artwork_availability = get_availability()
+            add_new_artwork(name, artwork_name, artwork_price, artwork_availability)
 
         if user_choice == 5:
             deleteArtwork()
@@ -147,11 +151,11 @@ def search_available_artwork_by_artist(name):
     db.close()
     display_artwork_by_an_artist(artwork_list)
 
-def addNewArtwork():
-    db.connect()
-    # Get the name of the artist that the user wants to view their artwork
-    name = input('Enter the name of the artist: ')
-    name_of_artwork = input('Enter the name of the piece of artwork: ')   
+def get_name_of_artwork():
+    name_of_artwork = input('Enter the name of the piece of artwork: ')
+    return name_of_artwork
+
+def get_price_of_artwork():
     # loop to make sure the number of catches is a positive number
     while True:
         try:
@@ -163,6 +167,9 @@ def addNewArtwork():
         except:
             pass
         print('Price must be a number.')
+    return price
+
+def get_availability():
     # Loop to get the user to enter true or false for artwork availability
     while True:
         try:
@@ -171,7 +178,10 @@ def addNewArtwork():
         except:
             pass
         print('Entry invalid.')
+    return available
 
+def add_new_artwork(name, name_of_artwork, price, available):
+    db.connect()  
     new_artwork = Artwork.Artwork(artist=name, name_of_artwork=name_of_artwork, price=price, available=available)
     new_artwork.save()
     db.close()
