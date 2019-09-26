@@ -35,10 +35,12 @@ def main():
             add_new_artist(name, email)
 
         if user_choice == 2:
-            searchArtworkByArtist()
+            name = get_artist_name()
+            search_artwork_by_artist(name)
 
         if user_choice == 3:
-            searchAvailableArtworkByArtist()
+            name = get_artist_name()
+            search_available_artwork_by_artist(name)
 
         if user_choice == 4:
             addNewArtwork()
@@ -122,34 +124,28 @@ def add_new_artist(name, email):
     print(name + ' was added successfully.')
     db.close()
 
-def searchArtworkByArtist():
+def search_artwork_by_artist(name):
     db.connect()
-    # Get the name of the artist that the user wants to view their artwork
-    name = input('Enter the name of the artist: ')
     # Locate all artwork with the corresponding name
     artwork_list = Artwork.Artwork.select().where(Artwork.Artwork.artist == name)
     # Display all artwork 
+    db.close()
+    display_artwork_by_an_artist(artwork_list)
+
+def display_artwork_by_an_artist(artwork_list):
     if len(artwork_list) == 0:
         print('This artist has no artwork in the database.')
     else:
         for artwork in artwork_list:
             print(artwork)
-    db.close()
 
-def searchAvailableArtworkByArtist():
+def search_available_artwork_by_artist(name):
     db.connect()
-    # Get the name of the artist that the user wants to view their available artwork
-    name = input('Enter the name of the artist: ')
     # Locate all artwork with the corresponding name that is available
     artwork_list = Artwork.Artwork.select().where(Artwork.Artwork.artist == name, Artwork.Artwork.available == True)
     # Display all available artwork 
-    # Test if there is no available artwork
-    if len(artwork_list) == 0:
-        print('This artist has no available artwork.')
-    else:
-        for artwork in artwork_list:
-            print(artwork)
     db.close()
+    display_artwork_by_an_artist(artwork_list)
 
 def addNewArtwork():
     db.connect()
