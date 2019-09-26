@@ -50,7 +50,8 @@ def main():
             add_new_artwork(name, artwork_name, artwork_price, artwork_availability)
 
         if user_choice == 5:
-            deleteArtwork()
+            artwork_name = get_name_of_artwork()
+            delete_artwork(artwork_name)
 
         if user_choice == 6:
             changeArtworkAvailability()
@@ -186,16 +187,17 @@ def add_new_artwork(name, name_of_artwork, price, available):
     new_artwork.save()
     db.close()
 
-def deleteArtwork():
-    db.connect()
-    # Get the name of the artwork
-    name_of_artwork = input('Enter the name of the artwork you want to delete: ')
-    delete = Artwork.Artwork.delete().where(Artwork.Artwork.name_of_artwork == name_of_artwork).execute()
-    if delete > 0:
-        print(name_of_artwork + " was deleted from the database.")
+def display_deleted(deleted):
+    if deleted > 0:
+        print("Artwork was deleted from the database.")
     else:
         print('This piece of artwork was not found in the database.')
+
+def delete_artwork(name_of_artwork):
+    db.connect()
+    delete = Artwork.Artwork.delete().where(Artwork.Artwork.name_of_artwork == name_of_artwork).execute()
     db.close()
+    display_deleted(delete)
 
 def changeArtworkAvailability():
     db.connect()
