@@ -8,7 +8,7 @@ db = SqliteDatabase('artstore_db.sqlite')
 
 # define the main method 
 def main():
-    createDataBase()
+    create_data_base()
     print('This program manages a database of artists and thier artwork')
     print('Enter the number of the option you want to choose.\n')
     # This loop will continue until the user enters 6 to exit the progam
@@ -30,7 +30,9 @@ def main():
             print('A number 1-7 must be selected.\n')
 
         if user_choice == 1:
-            addNewArtist()
+            name = get_artist_name()
+            email = get_artist_email()
+            add_new_artist(name, email)
 
         if user_choice == 2:
             searchArtworkByArtist()
@@ -50,7 +52,7 @@ def main():
         if user_choice == 7:
             break
 
-def createDataBase():
+def create_data_base():
     # Create the database connection to a db file
     db.connect()
     tables = db.get_tables()
@@ -58,39 +60,41 @@ def createDataBase():
     if len(tables) == 0:
         db.create_tables([Artist.Artist])
         db.create_tables([Artwork.Artwork])
-
-        # Add artists to the db
-        elon = Artist.Artist(name='Elon Musk', email='elon.musk@gmail.com')
-        elon.save()
-        jeff = Artist.Artist(name='Jeff Bezos', email='jeff.bezos@gmail.com')
-        jeff.save()
-        joe = Artist.Artist(name='Joe Rogan', email='joe.rogan@gmail.com')
-        joe.save()
-        andrew = Artist.Artist(name='Andrew Yang', email='andrew.yang@gmail.com')
-        andrew.save()
-
-        # Add artwork to the db
-        tesla_car = Artwork.Artwork(artist='Elon Musk', name_of_artwork='tesla_car', price=300.99, available=True)
-        tesla_truck = Artwork.Artwork(artist='Elon Musk', name_of_artwork='tesla_truck', price=521.39, available=False)
-        tesla_car.save()
-        tesla_truck.save()
-
-        fire_stick = Artwork.Artwork(artist='Jeff Bezos', name_of_artwork='fire_stick', price=152.78, available=True)
-        fire_phone = Artwork.Artwork(artist='Jeff Bezos', name_of_artwork='fire_phone', price=772.78, available=False)
-        fire_stick.save()
-        fire_phone.save()
-
-        chimp = Artwork.Artwork(artist='Joe Rogan', name_of_artwork='chimp', price=22.88, available=True)
-        gorilla = Artwork.Artwork(artist='Joe Rogan', name_of_artwork='gorilla', price=33.88, available=False)
-        chimp.save()
-        gorilla.save()
-
-        ubi = Artwork.Artwork(artist='Andrew Yang', name_of_artwork='ubi', price=12000, available=True)
-        climate_protection = Artwork.Artwork(artist='Andrew Yang', name_of_artwork='climate_protection', price=5000, available=False)
-        ubi.save()
-        climate_protection.save()
- 
+        add_test_data()
     db.close()
+
+def add_test_data():
+    # Put into a separate function
+    # Add artists to the db
+    elon = Artist.Artist(name='Elon Musk', email='elon.musk@gmail.com')
+    elon.save()
+    jeff = Artist.Artist(name='Jeff Bezos', email='jeff.bezos@gmail.com')
+    jeff.save()
+    joe = Artist.Artist(name='Joe Rogan', email='joe.rogan@gmail.com')
+    joe.save()
+    andrew = Artist.Artist(name='Andrew Yang', email='andrew.yang@gmail.com')
+    andrew.save()
+
+    # Add artwork to the db
+    tesla_car = Artwork.Artwork(artist='Elon Musk', name_of_artwork='tesla_car', price=300.99, available=True)
+    tesla_truck = Artwork.Artwork(artist='Elon Musk', name_of_artwork='tesla_truck', price=521.39, available=False)
+    tesla_car.save()
+    tesla_truck.save()
+
+    fire_stick = Artwork.Artwork(artist='Jeff Bezos', name_of_artwork='fire_stick', price=152.78, available=True)
+    fire_phone = Artwork.Artwork(artist='Jeff Bezos', name_of_artwork='fire_phone', price=772.78, available=False)
+    fire_stick.save()
+    fire_phone.save()
+
+    chimp = Artwork.Artwork(artist='Joe Rogan', name_of_artwork='chimp', price=22.88, available=True)
+    gorilla = Artwork.Artwork(artist='Joe Rogan', name_of_artwork='gorilla', price=33.88, available=False)
+    chimp.save()
+    gorilla.save()
+
+    ubi = Artwork.Artwork(artist='Andrew Yang', name_of_artwork='ubi', price=12000, available=True)
+    climate_protection = Artwork.Artwork(artist='Andrew Yang', name_of_artwork='climate_protection', price=5000, available=False)
+    ubi.save()
+    climate_protection.save()
 
 # Menu method will print all the progam options
 def menu():
@@ -102,11 +106,16 @@ def menu():
     print('6. Change the availability of a piece of artwork')
     print('7. Exit program')
 
-def addNewArtist():
-    db.connect()
-    # Get the name and email of the new artist
+def get_artist_name():
     name = input('Enter the name of the new artist: ')
+    return name
+
+def get_artist_email():
     email = input('Enter the email of the new artist: ')
+    return email
+
+def add_new_artist(name, email):
+    db.connect()
     # Add the new artist to the db
     new_artist = Artist.Artist(name=name, email=email)
     new_artist.save()
