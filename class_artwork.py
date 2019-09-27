@@ -1,12 +1,12 @@
 from peewee import *
-import class_artist as Artist
+from class_artist import Artist
 
 db = SqliteDatabase('artstore_db.sqlite')
 
 # Create model class. 
 class Artwork(Model):
     # use the artist name as the foreign key for each piece of artwork
-    artist = ForeignKeyField(Artist.Artist, to_field="name")
+    artist = ForeignKeyField(Artist, to_field="name")
     name_of_artwork = CharField()
     price = FloatField()
     available = BooleanField()

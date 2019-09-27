@@ -1,10 +1,9 @@
 import sqlite3
 from peewee import *
-import class_artist as Artist
-import class_artwork as Artwork
-
-# Assign database
-db = SqliteDatabase('artstore_db.sqlite')
+from class_artist import Artist
+from class_artwork import Artwork
+from artwork_db import *
+from get_input import *
 
 # define the main method 
 def main():
@@ -46,7 +45,7 @@ def main():
             name = get_artist_name()
             artwork_name = get_name_of_artwork()
             artwork_price = get_price_of_artwork()
-            artwork_availability = get_availability()
+            artwork_availability = get_artwork_availability()
             add_new_artwork(name, artwork_name, artwork_price, artwork_availability)
 
         if user_choice == 5:
@@ -54,54 +53,12 @@ def main():
             delete_artwork(artwork_name)
 
         if user_choice == 6:
-            changeArtworkAvailability()
+            name = get_name_of_artwork()
+            change_artwork_availability(name)
             
         if user_choice == 7:
             break
 
-def create_data_base():
-    # Create the database connection to a db file
-    db.connect()
-    tables = db.get_tables()
-    # If there are no tables in the db then add this base data
-    if len(tables) == 0:
-        db.create_tables([Artist.Artist])
-        db.create_tables([Artwork.Artwork])
-        add_test_data()
-    db.close()
-
-def add_test_data():
-    # Put into a separate function
-    # Add artists to the db
-    elon = Artist.Artist(name='Elon Musk', email='elon.musk@gmail.com')
-    elon.save()
-    jeff = Artist.Artist(name='Jeff Bezos', email='jeff.bezos@gmail.com')
-    jeff.save()
-    joe = Artist.Artist(name='Joe Rogan', email='joe.rogan@gmail.com')
-    joe.save()
-    andrew = Artist.Artist(name='Andrew Yang', email='andrew.yang@gmail.com')
-    andrew.save()
-
-    # Add artwork to the db
-    tesla_car = Artwork.Artwork(artist='Elon Musk', name_of_artwork='tesla_car', price=300.99, available=True)
-    tesla_truck = Artwork.Artwork(artist='Elon Musk', name_of_artwork='tesla_truck', price=521.39, available=False)
-    tesla_car.save()
-    tesla_truck.save()
-
-    fire_stick = Artwork.Artwork(artist='Jeff Bezos', name_of_artwork='fire_stick', price=152.78, available=True)
-    fire_phone = Artwork.Artwork(artist='Jeff Bezos', name_of_artwork='fire_phone', price=772.78, available=False)
-    fire_stick.save()
-    fire_phone.save()
-
-    chimp = Artwork.Artwork(artist='Joe Rogan', name_of_artwork='chimp', price=22.88, available=True)
-    gorilla = Artwork.Artwork(artist='Joe Rogan', name_of_artwork='gorilla', price=33.88, available=False)
-    chimp.save()
-    gorilla.save()
-
-    ubi = Artwork.Artwork(artist='Andrew Yang', name_of_artwork='ubi', price=12000, available=True)
-    climate_protection = Artwork.Artwork(artist='Andrew Yang', name_of_artwork='climate_protection', price=5000, available=False)
-    ubi.save()
-    climate_protection.save()
 
 # Menu method will print all the progam options
 def menu():
@@ -113,29 +70,17 @@ def menu():
     print('6. Change the availability of a piece of artwork')
     print('7. Exit program')
 
-def get_artist_name():
-    name = input('Enter the name of the new artist: ')
-    return name
-
-def get_artist_email():
-    email = input('Enter the email of the new artist: ')
-    return email
 
 def add_new_artist(name, email):
-    db.connect()
     # Add the new artist to the db
-    new_artist = Artist.Artist(name=name, email=email)
-    new_artist.save()
+    add_new_artist_to_db(name, email)
     print(name + ' was added successfully.')
-    db.close()
+
 
 def search_artwork_by_artist(name):
-    db.connect()
-    # Locate all artwork with the corresponding name
-    artwork_list = Artwork.Artwork.select().where(Artwork.Artwork.artist == name)
-    # Display all artwork 
-    db.close()
+    artwork_list = search_db_for_artwork_by_artist(name)
     display_artwork_by_an_artist(artwork_list)
+
 
 def display_artwork_by_an_artist(artwork_list):
     if len(artwork_list) == 0:
@@ -143,6 +88,7 @@ def display_artwork_by_an_artist(artwork_list):
     else:
         for artwork in artwork_list:
             print(artwork)
+
 
 def search_available_artwork_by_artist(name):
     db.connect()
@@ -152,40 +98,13 @@ def search_available_artwork_by_artist(name):
     db.close()
     display_artwork_by_an_artist(artwork_list)
 
-def get_name_of_artwork():
-    name_of_artwork = input('Enter the name of the piece of artwork: ')
-    return name_of_artwork
-
-def get_price_of_artwork():
-    # loop to make sure the number of catches is a positive number
-    while True:
-        try:
-            price = float(input('Enter the price of the piece of artwork: '))
-            if price > 0:
-                break
-            else:
-                print('Price must be a positive number.')
-        except:
-            pass
-        print('Price must be a number.')
-    return price
-
-def get_availability():
-    # Loop to get the user to enter true or false for artwork availability
-    while True:
-        try:
-            available = bool(input('Is this artwork available? True or False: '))
-            break
-        except:
-            pass
-        print('Entry invalid.')
-    return available
 
 def add_new_artwork(name, name_of_artwork, price, available):
     db.connect()  
     new_artwork = Artwork.Artwork(artist=name, name_of_artwork=name_of_artwork, price=price, available=available)
     new_artwork.save()
     db.close()
+
 
 def display_deleted(deleted):
     if deleted > 0:
@@ -199,22 +118,9 @@ def delete_artwork(name_of_artwork):
     db.close()
     display_deleted(delete)
 
-def changeArtworkAvailability():
+
+def change_artwork_availability(name_of_artwork):
     db.connect()
-    # Get the name of the artwork
-    name_of_artwork = input('Enter the name of the artwork that\'s availability is being changed: ')
-    # Loop to get the user to enter true or false for artwork availability
-    while True:
-        availability = input('Is this artwork available? Y or N: ')
-        if availability.lower() == 'y':
-            availability = True
-            break
-        elif availability.lower() == 'n':
-            availability = False
-            break
-        else:
-            pass
-            print('Entry invalid.')
     update = Artwork.Artwork.update(available=availability).where(Artwork.Artwork.name_of_artwork == name_of_artwork).execute()
     if update > 0:
         print(name_of_artwork + ' now has the availability of: ' + str(availability))
