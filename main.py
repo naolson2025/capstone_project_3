@@ -64,7 +64,6 @@ def main():
 def add_new_artist(name, email):
     # Add the new artist to the db
     new_artist = add_new_artist_to_db(name, email)
-    # TODO add display of artist that was added to the db
     display_new_artist(new_artist)
 
 
@@ -77,9 +76,13 @@ def search_available_artwork_by_artist(name):
     artwork_list = search_db_for_available_artwork_by_artist(name)
     display_available_artwork_by_an_artist(artwork_list)
 
-# TODO if someone trys to add artwork for an artist that does not exist
-# TODO if someone enters an invalid parameter
+
 def add_new_artwork(name, name_of_artwork, price, available):
+    db_search_results = db_search_for_artist(name)
+    is_artist_in_db = validate_artist_in_db(db_search_results)
+    if is_artist_in_db == False:
+        email = get_artist_email()
+        add_new_artist(name, email)
     new_artwork = add_new_artwork_to_db(name, name_of_artwork, price, available)
     display_new_artwork(new_artwork)
 

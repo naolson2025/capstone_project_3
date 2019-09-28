@@ -28,6 +28,12 @@ def add_new_artist_to_db(name, email):
     return new_artist
 
 
+def db_search_for_artist(name):
+    db.connect()
+    artist = Artist.select().where(Artist.name == name)
+    db.close()
+    return artist
+
 def search_db_for_artwork_by_artist(name):
     db.connect()
     # Locate all artwork with the corresponding name

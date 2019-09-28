@@ -19,7 +19,12 @@ def get_artist_email():
 
 
 def get_name_of_artwork():
-    name_of_artwork = input('Enter the name of the piece of artwork: ')
+    while True:
+        name_of_artwork = input('Enter the name of the piece of artwork: ')
+        if name_of_artwork != '':
+            break
+        else:
+            print('Name of artwork cannot be blank')
     return name_of_artwork
 
 
@@ -52,3 +57,11 @@ def get_artwork_availability():
             pass
             print('Entry invalid.')
     return availability
+
+# if the artist is already in the db return true
+# if not return false
+def validate_artist_in_db(db_search_results):
+    if len(db_search_results) > 0:
+        return True
+    else:
+        return False
