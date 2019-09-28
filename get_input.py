@@ -1,10 +1,20 @@
 def get_artist_name():
-    name = input('Enter the name of the new artist: ')
+    while True:
+        name = input('Enter the name of the artist: ')
+        if name != '':
+            break
+        else:
+            print('Name cannot be blank.')
     return name
 
 
 def get_artist_email():
-    email = input('Enter the email of the new artist: ')
+    while True:
+        email = input('Enter the email of the new artist: ')
+        if email != '':
+            break
+        else:
+            print('Email cannot be blank')
     return email
 
 
@@ -41,5 +51,4 @@ def get_artwork_availability():
         else:
             pass
             print('Entry invalid.')
-
     return availability

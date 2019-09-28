@@ -2,8 +2,9 @@ import sqlite3
 from peewee import *
 from class_artist import Artist
 from class_artwork import Artwork
-from artwork_db import *
+from database import *
 from get_input import *
+from display import *
 
 # define the main method 
 def main():
@@ -60,21 +61,11 @@ def main():
             break
 
 
-# Menu method will print all the progam options
-def menu():
-    print('1. Add a new artist')
-    print('2. Search all artwork by an artist')
-    print('3. Search all available artwork for an artist')
-    print('4. Add a new piece of artwork')
-    print('5. Delete a piece of artwork')
-    print('6. Change the availability of a piece of artwork')
-    print('7. Exit program')
-
-
 def add_new_artist(name, email):
     # Add the new artist to the db
-    add_new_artist_to_db(name, email)
-    print(name + ' was added successfully.')
+    new_artist = add_new_artist_to_db(name, email)
+    # TODO add display of artist that was added to the db
+    display_new_artist(new_artist)
 
 
 def search_artwork_by_artist(name):
@@ -82,50 +73,25 @@ def search_artwork_by_artist(name):
     display_artwork_by_an_artist(artwork_list)
 
 
-def display_artwork_by_an_artist(artwork_list):
-    if len(artwork_list) == 0:
-        print('This artist has no artwork in the database.')
-    else:
-        for artwork in artwork_list:
-            print(artwork)
-
-
 def search_available_artwork_by_artist(name):
-    db.connect()
-    # Locate all artwork with the corresponding name that is available
-    artwork_list = Artwork.Artwork.select().where(Artwork.Artwork.artist == name, Artwork.Artwork.available == True)
-    # Display all available artwork 
-    db.close()
-    display_artwork_by_an_artist(artwork_list)
+    artwork_list = search_db_for_available_artwork_by_artist(name)
+    display_available_artwork_by_an_artist(artwork_list)
 
-
+# TODO if someone trys to add artwork for an artist that does not exist
+# TODO if someone enters an invalid parameter
 def add_new_artwork(name, name_of_artwork, price, available):
-    db.connect()  
-    new_artwork = Artwork.Artwork(artist=name, name_of_artwork=name_of_artwork, price=price, available=available)
-    new_artwork.save()
-    db.close()
+    new_artwork = add_new_artwork_to_db(name, name_of_artwork, price, available)
+    display_new_artwork(new_artwork)
 
-
-def display_deleted(deleted):
-    if deleted > 0:
-        print("Artwork was deleted from the database.")
-    else:
-        print('This piece of artwork was not found in the database.')
 
 def delete_artwork(name_of_artwork):
-    db.connect()
-    delete = Artwork.Artwork.delete().where(Artwork.Artwork.name_of_artwork == name_of_artwork).execute()
-    db.close()
-    display_deleted(delete)
+    delete = delete_artwork_in_db(name_of_artwork)
+    display_deleted(delete, name_of_artwork)
 
 
 def change_artwork_availability(name_of_artwork):
-    db.connect()
-    update = Artwork.Artwork.update(available=availability).where(Artwork.Artwork.name_of_artwork == name_of_artwork).execute()
-    if update > 0:
-        print(name_of_artwork + ' now has the availability of: ' + str(availability))
-    else:
-        print('This piece of artwork was not found in the database.') 
-    db.close()
+    availability = get_artwork_availability()
+    updated_artwork = db_change_artwork_availability(name_of_artwork, availability)
+    display_change_artwork_availability(name_of_artwork, updated_artwork, availability)
 
 main()
