@@ -5,18 +5,25 @@ from peewee import *
 
 # Assign database
 db = SqliteDatabase('artstore_db.sqlite')
+test_db = SqliteDatabase('test_artstore_db.sqlite')
 
 
 def create_data_base():
     # Create the database connection to a db file
     db.connect()
+    test_db.connect()
     tables = db.get_tables()
     # If there are no tables in the db then add this base data
     if len(tables) == 0:
         db.create_tables([Artist])
         db.create_tables([Artwork])
         add_test_data()
+
+        # Create test database and tables
+        test_db.create_tables([Artist])
+        test_db.create_tables([Artwork])
     db.close()
+    test_db.close()
 
 
 def add_new_artist_to_db(name, email):

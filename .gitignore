@@ -3,3 +3,4 @@ artstore_db.sqlite
 __pycache__
 peewee_orm/venv
 venv
+test_artstore_db.sqlite
