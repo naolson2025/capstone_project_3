@@ -1,6 +1,7 @@
 from peewee import *
 
-db = SqliteDatabase('artstore_db.sqlite')
+#db = SqliteDatabase('artstore_db.sqlite')
+db = SqliteDatabase('test_artstore_db.sqlite')
 
 # Create model class. 
 class Artist(Model):

@@ -6,9 +6,11 @@ from database import *
 from get_input import *
 from display import *
 
+db_file = 'artstore_db.sqlite'
+
 # define the main method 
 def main():
-    create_data_base()
+    database = Database(db_file)
     print('This program manages a database of artists and thier artwork')
     print('Enter the number of the option you want to choose.\n')
     # This loop will continue until the user enters 6 to exit the progam
@@ -62,39 +64,47 @@ def main():
 
 
 def add_new_artist(name, email):
+    database = Database(db_file)
     # Add the new artist to the db
-    new_artist = add_new_artist_to_db(name, email)
+    new_artist = database.add_new_artist_to_db(name, email)
     display_new_artist(new_artist)
 
 
 def search_artwork_by_artist(name):
-    artwork_list = search_db_for_artwork_by_artist(name)
+    database = Database(db_file)
+    artwork_list = database.search_db_for_artwork_by_artist(name)
     display_artwork_by_an_artist(artwork_list)
 
-
+ 
 def search_available_artwork_by_artist(name):
-    artwork_list = search_db_for_available_artwork_by_artist(name)
+    database = Database(db_file)
+    artwork_list = database.search_db_for_available_artwork_by_artist(name)
     display_available_artwork_by_an_artist(artwork_list)
 
 
 def add_new_artwork(name, name_of_artwork, price, available):
-    db_search_results = db_search_for_artist(name)
+    database = Database(db_file)
+    db_search_results = database.db_search_for_artist(name)
     is_artist_in_db = validate_artist_in_db(db_search_results)
     if is_artist_in_db == False:
         email = get_artist_email()
         add_new_artist(name, email)
-    new_artwork = add_new_artwork_to_db(name, name_of_artwork, price, available)
+    new_artwork = database.add_new_artwork_to_db(name, name_of_artwork, price, available)
     display_new_artwork(new_artwork)
 
 
 def delete_artwork(name_of_artwork):
-    delete = delete_artwork_in_db(name_of_artwork)
+    database = Database(db_file)
+    delete = database.delete_artwork_in_db(name_of_artwork)
     display_deleted(delete, name_of_artwork)
 
 
 def change_artwork_availability(name_of_artwork):
+    database = Database(db_file)
     availability = get_artwork_availability()
-    updated_artwork = db_change_artwork_availability(name_of_artwork, availability)
+    updated_artwork = database.db_change_artwork_availability(name_of_artwork, availability)
     display_change_artwork_availability(name_of_artwork, updated_artwork, availability)
 
-main()
+
+if __name__=='__main__':
+    main()

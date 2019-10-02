@@ -1,81 +1,93 @@
 from class_artist import Artist
 from class_artwork import Artwork
 from test_data import *
-from peewee import *
+from peewee import SqliteDatabase
 
-# Assign database
-db = SqliteDatabase('artstore_db.sqlite')
-test_db = SqliteDatabase('test_artstore_db.sqlite')
+class Database():
 
-
-def create_data_base():
-    # Create the database connection to a db file
-    db.connect()
-    test_db.connect()
-    tables = db.get_tables()
-    # If there are no tables in the db then add this base data
-    if len(tables) == 0:
-        db.create_tables([Artist])
-        db.create_tables([Artwork])
-        add_test_data()
-
-        # Create test database and tables
-        test_db.create_tables([Artist])
-        test_db.create_tables([Artwork])
-    db.close()
-    test_db.close()
+    def __init__(self, db):
+        self.db = db
+        self.create_data_base()
 
 
-def add_new_artist_to_db(name, email):
-    db.connect()
-    # Add the new artist to the db
-    new_artist = Artist(name=name, email=email)
-    new_artist.save()
-    db.close()
-    return new_artist
+    def create_data_base(self):
+        database = SqliteDatabase(self.db)
+        # Create the database connection to a db file
+        database.connect()
+        tables = database.get_tables()
+        # If there are no tables in the db then add this base data
+        if len(tables) == 0:
+            database.create_tables([Artist, Artwork])
+            #add_test_data()
+        database.close()
 
 
-def db_search_for_artist(name):
-    db.connect()
-    artist = Artist.select().where(Artist.name == name)
-    db.close()
-    return artist
-
-def search_db_for_artwork_by_artist(name):
-    db.connect()
-    # Locate all artwork with the corresponding name
-    artwork_list = Artwork.select().where(Artwork.artist == name)
-    # Display all artwork 
-    db.close()
-    return artwork_list
+    def add_new_artist_to_db(self, name, email):
+        database = SqliteDatabase(self.db)
+        database.connect()
+        # Add the new artist to the db
+        new_artist = Artist(name=name, email=email)
+        new_artist.save()
+        database.close()
+        return new_artist
 
 
-def search_db_for_available_artwork_by_artist(name):
-    db.connect()
-    # Locate all artwork with the corresponding name that is available
-    artwork_list = Artwork.select().where(Artwork.artist == name, Artwork.available == True)
-    # Display all available artwork 
-    db.close()
-    return artwork_list
+    def db_search_for_artist(self, name):
+        database = SqliteDatabase(self.db)
+        database.connect()
+        artist = Artist.select().where(Artist.name == name)
+        database.close()
+        return artist
 
 
-def add_new_artwork_to_db(name, name_of_artwork, price, available):
-    db.connect()  
-    new_artwork = Artwork(artist=name, name_of_artwork=name_of_artwork, price=price, available=available)
-    new_artwork.save()
-    db.close()
-    return new_artwork
+    def search_db_for_artwork_by_artist(self, name):
+        database = SqliteDatabase(self.db)
+        database.connect()
+        # Locate all artwork with the corresponding name
+        artwork_list = Artwork.select().where(Artwork.artist == name)
+        # Display all artwork 
+        database.close()
+        return artwork_list
 
 
-def delete_artwork_in_db(name_of_artwork):
-    db.connect()
-    delete = Artwork.delete().where(Artwork.name_of_artwork == name_of_artwork).execute()
-    db.close()
-    return delete
+    def search_db_for_available_artwork_by_artist(self, name):
+        database = SqliteDatabase(self.db)
+        database.connect()
+        # Locate all artwork with the corresponding name that is available
+        artwork_list = Artwork.select().where(Artwork.artist == name, Artwork.available == True)
+        # Display all available artwork 
+        database.close()
+        return artwork_list
 
 
-def db_change_artwork_availability(name_of_artwork, availability):
-    db.connect()
-    updated_artwork = Artwork.update(available=availability).where(Artwork.name_of_artwork == name_of_artwork).execute()
-    db.close()
-    return updated_artwork
+    def add_new_artwork_to_db(self, name, name_of_artwork, price, available):
+        database = SqliteDatabase(self.db)
+        database.connect()  
+        new_artwork = Artwork(artist=name, name_of_artwork=name_of_artwork, price=price, available=available)
+        new_artwork.save()
+        database.close()
+        return new_artwork
+
+
+    def delete_artwork_in_db(self, name_of_artwork):
+        database = SqliteDatabase(self.db)
+        database.connect()
+        delete = Artwork.delete().where(Artwork.name_of_artwork == name_of_artwork).execute()
+        database.close()
+        return delete
+
+
+    def db_change_artwork_availability(self, name_of_artwork, availability):
+        database = SqliteDatabase(self.db)
+        database.connect()
+        updated_artwork = Artwork.update(available=availability).where(Artwork.name_of_artwork == name_of_artwork).execute()
+        database.close()
+        return updated_artwork
+
+
+    def db_clear_tables(self):
+        database = SqliteDatabase(self.db)
+        database.connect()
+        Artwork.delete().where(Artwork.name_of_artwork != '').execute()
+        Artist.delete().where(Artist.name != '').execute()
+        database.close()
