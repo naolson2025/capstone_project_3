@@ -28,7 +28,7 @@ class TestArtworkCatalog(TestCase):
         test_db = Database(test_db_url)
         test_db.add_new_artist_to_db('Steve', 'Steve@gmail.com')
         artist = test_db.db_search_for_artist('Steve')
-        self.assertEqual('Steve', artist)
+        self.assertEqual('Steve', artist.name)
 
     def test_add_new_artwork_to_db(self):
         test_db = Database(test_db_url)
@@ -53,11 +53,9 @@ class TestArtworkCatalog(TestCase):
 
         for row in all_data:
             # ID, Artist, and email should all match
-            #self.assertEqual(row[0], expected[0])            
-            #self.assertEqual(row[1], expected[1])  
-            #self.assertEqual(row[2], expected[2])  
-            for item in row:
-                self.assertEqual(row[item], expected[item])
+            self.assertEqual(row[0], expected[0])            
+            self.assertEqual(row[1], expected[1])  
+            self.assertEqual(row[2], expected[2])  
 
         conn.close()
 
@@ -69,10 +67,9 @@ class TestArtworkCatalog(TestCase):
 
         for row in all_data:
             # ID, Artist, and email should all match
-            #self.assertEqual(row[0], expected[0])            
-            #self.assertEqual(row[1], expected[1])  
-            #self.assertEqual(row[2], expected[2])  
-            for item in row:
-                self.assertEqual(row[item], expected[item])
+            self.assertEqual(row[0], expected[0])            
+            self.assertEqual(row[1], expected[1])  
+            self.assertEqual(row[2], expected[2])  
+
 
         conn.close()

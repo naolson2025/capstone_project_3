@@ -1,8 +1,8 @@
 from peewee import *
 from class_artist import Artist
 
-#db = SqliteDatabase('artstore_db.sqlite')
-db = SqliteDatabase('test_artstore_db.sqlite')
+db = SqliteDatabase('artstore_db.sqlite')
+#db = SqliteDatabase('test_artstore_db.sqlite')
 
 # Create model class. 
 class Artwork(Model):
